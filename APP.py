@@ -1,7 +1,7 @@
 import streamlit as st
 from Inference import chat_bot
 
-st.title("Chat with Gemini 2.0 Flash")
+st.title("Chat bot dengan gemini API")
 
 if "message" not in st.session_state:
     st.session_state.message = []
