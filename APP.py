@@ -1,7 +1,7 @@
 import streamlit as st
 from Inference import chat_bot
 
-st.title("Chat bot dengan api gemini")
+st.title("Chat with Gemini 2.0 Flash")
 
 if"message" not in st.session_state:
     st.session_state.message = []
@@ -17,7 +17,7 @@ if prompt:
     with st.chat_message("user"):
         st.markdown(prompt)
     st.session_state.message.append({"role": "user", "content": prompt})
-    
+
     with st.chat_message("assistant"):
         st.markdown(response)
     st.session_state.message.append({"role": "assistant", "content": response})
