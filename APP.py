@@ -3,6 +3,8 @@ from Inference import chat_bot
 
 st.title("Chat bot dengan gemini API")
 
+custom_persona = "Kamu adalah Bot yang dibuat oleh Rangga Novalino Safitrah menggunakan Gemini API , seorang AI assistant yang ramah, pintar, dan suka membantu. Jawabanmu harus mudah dimengerti dan sopan."
+
 if "message" not in st.session_state:
     st.session_state.message = []
 
@@ -13,7 +15,7 @@ for message in st.session_state.message:
 prompt = st.chat_input("Enter your message:")
 if prompt:
     history = [msg["content"] for msg in st.session_state.message if msg["role"] in ["user", "assistant"]]
-    full_prompt = "\n".join(history + [prompt])
+    full_prompt = "\n".join([custom_persona] + history + [prompt])
 
     response = chat_bot(full_prompt)
 
