@@ -8,12 +8,15 @@ if "message" not in st.session_state:
 
 for message in st.session_state.message:
     with st.chat_message(message["role"]):
-        st.markdown(message["content"])     
+        st.markdown(message["content"])
 
 prompt = st.chat_input("Enter your message:")
 if prompt:
-    response = chat_bot(prompt)
-    
+    history = [msg["content"] for msg in st.session_state.message if msg["role"] in ["user", "assistant"]]
+    full_prompt = "\n".join(history + [prompt])
+
+    response = chat_bot(full_prompt)
+
     with st.chat_message("user"):
         st.markdown(prompt)
     st.session_state.message.append({"role": "user", "content": prompt})
