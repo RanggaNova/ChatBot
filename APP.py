@@ -3,7 +3,7 @@ from Inference import chat_bot
 
 st.title("Chat with Gemini 2.0 Flash")
 
-if"message" not in st.session_state:
+if "message" not in st.session_state:
     st.session_state.message = []
 
 for message in st.session_state.message:
