@@ -13,7 +13,7 @@ def get_gemini_model():
     if api_key:
         try:
             genai.configure(api_key=api_key)
-            model = genai.GenerativeModel('gemini-1.5-flash-latest')
+            model = genai.GenerativeModel("gemini-2.0-flash-lite")
             return model
         except Exception as e:
             print(f"Error saat konfigurasi Gemini: {e}")
