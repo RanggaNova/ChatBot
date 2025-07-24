@@ -1,18 +1,92 @@
-from google.generativeai import configure, GenerativeModel
 import os
 from dotenv import load_dotenv
+import google.generativeai as genai
 
-load_dotenv()
-api_key = os.getenv("GEMINI_API_KEY")
+def get_gemini_model():
+    """
+    Menginisialisasi dan mengembalikan model Generative AI dari Google.
+    API key dibaca dari environment variables.
+    """
+    load_dotenv()
+    api_key = os.getenv("GEMINI_API_KEY")
 
-configure(api_key=api_key)
+    if api_key:
+        try:
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel('gemini-1.5-flash-latest')
+            return model
+        except Exception as e:
+            print(f"Error saat konfigurasi Gemini: {e}")
+            return None
+    
+    print("GEMINI_API_KEY tidak ditemukan di environment variables.")
+    return None
 
-model = GenerativeModel('gemini-2.0-flash') 
+def transcribe_audio(model, audio_file_path):
+    """
+    Mengirim file audio ke model Gemini untuk transkripsi.
 
-def chat_bot(prompt):
-    response = model.generate_content(prompt)
-    return response.text
+    Args:
+        model: Instance dari GenerativeModel.
+        audio_file_path (str): Path ke file audio.
 
-if __name__ == "__main__":
-    user_input = input("Chat: ")
-    print(chat_bot(user_input))
+    Returns:
+        str: Teks hasil transkripsi atau None jika gagal.
+    """
+    if not model:
+        return "Model Gemini tidak terinisialisasi."
+
+    try:
+        # 1. Upload file audio menggunakan genai.upload_file (INI PERBAIKANNYA)
+        audio_file = genai.upload_file(
+            path=audio_file_path,
+            display_name="recorded_audio"
+        )
+
+        # 2. Buat prompt untuk transkripsi
+        prompt = "Transcribe this audio. Return only the transcribed text, without any introductory phrases or explanations."
+        
+        # 3. Panggil model dengan prompt dan file audio
+        response = model.generate_content([prompt, audio_file])
+        
+        # 4. Hapus file setelah digunakan
+        genai.delete_file(name=audio_file.name)
+
+        return response.text.strip()
+        
+    except Exception as e:
+        print(f"Error saat transkripsi audio: {e}")
+        try:
+            if 'audio_file' in locals() and audio_file:
+                genai.delete_file(name=audio_file.name)
+        except Exception as delete_error:
+            print(f"Gagal menghapus file saat error handling: {delete_error}")
+            
+        return f"Terjadi kesalahan saat transkripsi: {e}"
+
+
+def chat_bot(model, history, persona=""):
+    """
+    Menghasilkan respons dari chatbot berdasarkan riwayat percakapan.
+
+    Args:
+        model: Instance dari GenerativeModel.
+        history (list): Riwayat percakapan.
+        persona (str): Persona atau instruksi sistem untuk model.
+
+    Returns:
+        str: Respons teks dari model.
+    """
+    if not model:
+        return "Model Gemini tidak terinisialisasi. Periksa API key Anda."
+
+    new_history = history.copy()
+    if persona:
+        new_history.insert(0, {"role": "user", "parts": [persona]})
+    
+    try:
+        response = model.generate_content(new_history)
+        return response.text
+    except Exception as e:
+        print(f"Error saat generate content: {e}")
+        return f"Terjadi kesalahan saat menghubungi API Gemini: {e}"
