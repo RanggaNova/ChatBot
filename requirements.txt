@@ -52,7 +52,7 @@ python-dateutil==2.9.0.post0
 python-dotenv==1.1.1
 pytz==2025.2
 referencing==0.36.2
-rembg==2.0.67
+rembg[gpu]==2.0.67
 requests==2.32.4
 rpds-py==0.26.0
 rsa==4.9.1
@@ -61,6 +61,7 @@ scipy==1.16.0
 six==1.17.0
 smmap==5.0.2
 streamlit==1.47.0
+streamlit-mic-recorder==0.0.4
 tenacity==9.1.2
 tifffile==2025.6.11
 toml==0.10.2

@@ -37,19 +37,15 @@ def transcribe_audio(model, audio_file_path):
         return "Model Gemini tidak terinisialisasi."
 
     try:
-        # 1. Upload file audio menggunakan genai.upload_file (INI PERBAIKANNYA)
         audio_file = genai.upload_file(
             path=audio_file_path,
             display_name="recorded_audio"
         )
 
-        # 2. Buat prompt untuk transkripsi
         prompt = "Transcribe this audio. Return only the transcribed text, without any introductory phrases or explanations."
         
-        # 3. Panggil model dengan prompt dan file audio
         response = model.generate_content([prompt, audio_file])
         
-        # 4. Hapus file setelah digunakan
         genai.delete_file(name=audio_file.name)
 
         return response.text.strip()
